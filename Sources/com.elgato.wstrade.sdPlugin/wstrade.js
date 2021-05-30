@@ -1,5 +1,9 @@
 var WsTrade = {
     auth: function() {
-        console.log("wstrade-auth")
+        fetch('https://trade-service.wealthsimple.com/account/list', {
+            headers: {"Authorization": "bearer placeholder"}
+        })
+            .then(response => response.json())
+            .then(data => console.log(data));
     }
 }
