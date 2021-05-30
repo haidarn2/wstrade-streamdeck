@@ -12,7 +12,7 @@
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "This action displays a value set by the user",
-      "UUID": "com.elgato.numberdisplay.action"
+      "UUID": "com.elgato.wstrade.action"
     }
   ],
   "SDKVersion": 2,
