@@ -40,7 +40,7 @@
 				this.SetSettings(context, updatedSettings);
 
 				this.SetTitle(context, keyPressCounter);
-				WsTrade.auth()
+				WsTrade.accountHistory("my-account-name", "1d")
 			},
 
 			onWillAppear: function (context, settings, coordinates) {
