@@ -24,23 +24,16 @@
 			},
 
 			onKeyUp: function (context, settings, coordinates, userDesiredState) {
-
-				var keyPressCounter = 0;
-				if (settings != null && settings.hasOwnProperty('keyPressCounter')) {
-					keyPressCounter = settings["keyPressCounter"];
-				}
-
-				keyPressCounter++;
-				keyPressCounter = keyPressCounter % 10;
-
-				updatedSettings = {};
-				updatedSettings["keyPressCounter"] = keyPressCounter;
+				updatedSettings = settings;
 				settingsCache[context] = updatedSettings;
 
-				this.SetSettings(context, updatedSettings);
+				WsTrade.accountHistory(settings["oauthToken"], "placeholder-account-id", "1d")
+					.then(data => {
+						let account_value = data.previous_close_net_liquidation_value.amount;
+						this.SetTitle(context, "$" + account_value.toFixed(0));
+					});
 
-				this.SetTitle(context, keyPressCounter);
-				WsTrade.accountHistory("my-account-name", "1d")
+				this.SetSettings(context, updatedSettings);
 			},
 
 			onWillAppear: function (context, settings, coordinates) {
@@ -151,6 +144,13 @@
 							};
 							websocket.send(JSON.stringify(json));
 						})
+
+					}
+
+					if (jsonPayload.hasOwnProperty('oauth-token')) {
+
+						const oauthToken = jsonPayload['oauth-token'];
+						numberdisplayAction.SetSettings(context, { "oauthToken": oauthToken });
 
 					}
 				}
