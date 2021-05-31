@@ -13,7 +13,7 @@
 
 # Installation
 
-In the Release folder, you'll find a pre-compiled binary `com.elgato.counter.sdPlugin`. Simply run this binary to add the plugin to your StreamDeck plugin list. The "Wealthsimple Trade" action will appear under the "Custom" category.
+In the Release folder, you'll find a pre-compiled binary `com.elgato.wstrade.streamDeckPlugin`. Simply run this binary to add the plugin to your StreamDeck plugin list. The "Wealthsimple Trade" action will appear under the "Custom" category.
 
 
 # Build from source
