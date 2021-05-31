@@ -3,13 +3,32 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>com.elgato.numberdisplay PI</title>
+    <title>com.elgato.wstrade PI</title>
     <link rel="stylesheet" href="sdpi.css">
     <script src="common.js"></script>
+    <script>
+        function oauthChange() {
+            document.getElementById("oauth-submit").disabled = !document.getElementById("oauth-input").checkValidity();
+        }
+        function oauthSubmit() {
+            sendValueToPlugin(document.getElementById("oauth-input").value, 'oauth-token');
+        }
+    </script>
 </head>
 
 <body>
+    
     <div class="sdpi-wrapper">
+        <div type="textarea" class="sdpi-item" id="required_text">
+            <div class="sdpi-item-label">OAuth Token</div>
+            <span class="sdpi-item-value">
+                <input type="text" id="oauth-input" placeholder="Paste OAuth token" pattern=".{43}" title="Invalid OAuth token" oninput="oauthChange()" required></input>
+            </span>
+        </div>
+        <div class="sdpi-item">
+            <button class="sdpi-item-value" id="oauth-submit" onclick="oauthSubmit()" disabled="true">Save</button>
+       </div>
+     <!--
         <div type="select" class="sdpi-item">
             <div class="sdpi-item-label">Change Value</div>
             <select class="sdpi-item-value select setvalueSelect" onchange="sendValueToPlugin(Number(event.target.value), 'setValue')">
@@ -39,7 +58,8 @@
                 <option value="actionDefaultImage_blue">Blue Background</option>
                 <option value="actionDefaultImage_yellow">Yellow Background</option>
             </select>
-        </div>
+        </div> 
+        -->
     </div>
 
     <script>
