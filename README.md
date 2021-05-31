@@ -1,27 +1,22 @@
-
-`NumberDisplay` is a sample plugin demonstrating the [Stream Deck SDK](https://developer.elgato.com/documentation/stream-deck/).
-
-
-# Description
-
-`NumberDisplay` is a plugin that displays a number chosen by the user. This plugin demonstrates how to create a custom Property Inspector and how to pass values from Property Inspector's input controls to the plugin.
-
+# wstrade-streamdeck
+`wstrade-streamdeck` is an unofficial Wealthsimple Trade plugin for the Elgato Stream deck. This plugin makes use of the the [Stream Deck SDK](https://developer.elgato.com/documentation/stream-deck/).
 
 # Features
 
-- code written in Javascript
-- cross-platform (macOS, Windows)
-- Property Inspector with multiple UI elements
-- localized
+- Display account value in real-time
+- Automatic OAuth token refresh (wip!)
+- Daily high-low tracking (wip!)
+- Buy/Sell securities with a button press (wip!)
 
 ![](screenshot.png)
 
 
 # Installation
 
-In the Release folder, you can find the file `com.elgato.numberdisplay.streamDeckPlugin`. If you double-click this file on your machine, Stream Deck will install the plugin.
+In the Release folder, you'll find a pre-compiled binary `com.elgato.counter.sdPlugin`. Simply run this binary to add the plugin to your StreamDeck plugin list. The "Wealthsimple Trade" action will appear under the "Custom" category.
 
 
-# Source code
+# Build from source
 
-The Sources folder contains the source code of the plugin.
+1. Download the [Elgato StreamDeck DistributionTool](https://developer.elgato.com/documentation/stream-deck/sdk/exporting-your-plugin/) for your platform.
+2. Compile from sources `DistributionTool -b -i Sources/com.elgato.wstrade.sdPlugin -o ~/Desktop/`
