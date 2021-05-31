@@ -11,7 +11,11 @@
             document.getElementById("oauth-submit").disabled = !document.getElementById("oauth-input").checkValidity();
         }
         function oauthSubmit() {
-            sendValueToPlugin(document.getElementById("oauth-input").value, 'oauth-token');
+            let payload = {
+                "accountId": document.getElementById("account-id").value,
+                "oauthToken": document.getElementById("oauth-input").value
+            }
+            sendValueToPlugin(payload, 'pi-save-button');
         }
     </script>
 </head>
@@ -19,6 +23,12 @@
 <body>
     
     <div class="sdpi-wrapper">
+        <div type="textarea" class="sdpi-item" id="required_text">
+            <div class="sdpi-item-label">WS Account ID</div>
+            <span class="sdpi-item-value">
+                <input type="text" id="account-id" placeholder="eg: non-registered-dsiofghe2" required></input>
+            </span>
+        </div>
         <div type="textarea" class="sdpi-item" id="required_text">
             <div class="sdpi-item-label">OAuth Token</div>
             <span class="sdpi-item-value">
