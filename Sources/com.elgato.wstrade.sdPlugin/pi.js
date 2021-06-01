@@ -44,7 +44,7 @@ function sendValueToPlugin(value, param) {
 }
 
 function openMeExternal() {
-    window.xtWindow = window.open('index_pi.html', "PI Samples");
+    window.xtWindow = window.open('login_pi.html', "WS Trade Login");
     setTimeout(() => window.xtWindow.postMessage('initPropertyInspector', '*'), 1500);
 }
 

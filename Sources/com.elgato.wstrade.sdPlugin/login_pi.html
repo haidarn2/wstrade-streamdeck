@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>com.elgato.wstrade PI</title>
+    <link rel="stylesheet" href="sdpi.css">
+    <script src="common.js"></script>
+
+</head>
+
+<body>
+    <script src="pi.js"></script>
+
+    <div class="sdpi-wrapper">
+        <div type="textarea" class="sdpi-item" id="required_text">
+            <div class="sdpi-item-label">WS Account ID</div>
+            <span class="sdpi-item-value">
+                <input type="text" id="account-id" placeholder="eg: non-registered-dsiofghe2" required></input>
+            </span>
+        </div>
+        <div type="textarea" class="sdpi-item" id="required_text">
+            <div class="sdpi-item-label">OAuth Token</div>
+            <span class="sdpi-item-value">
+                <input type="text" id="oauth-input" placeholder="Paste OAuth token" pattern=".{43}" title="Invalid OAuth token" oninput="oauthChange()" required></input>
+            </span>
+        </div>
+        <div class="sdpi-item">
+            <button class="sdpi-item-value" id="oauth-submit" onclick="oauthSubmit()" disabled="true">Save</button>
+       </div>
+    </div>
+
+</body>
+
+</html>
