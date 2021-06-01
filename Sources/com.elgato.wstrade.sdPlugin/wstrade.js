@@ -2,12 +2,18 @@ var websocket = null;
 var pluginUUID = null;
 var settingsCache = {};
 var DestinationEnum = Object.freeze({ "HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2 })
+
+// canvas global vars
+var canvas;
+var canvasContext;
+var canvasWidth;
+var canvasHeight;
+
 var numberdisplayAction = {
 	type: "com.elgato.wstrade.action",
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		console.log("yoooo");
 		draw(context);
 		//settingsCache[context] = settings;
 		//WsTrade.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
@@ -17,8 +23,15 @@ var numberdisplayAction = {
 		//	});
 	},
 	onWillAppear: function (context, settings, coordinates) {
+		this.initCanvas();
 		this.SetTitle(context, "yo.");
 	},
+	initCanvas: function() {
+        canvas = document.getElementById("canvas");
+        canvasContext = canvas.getContext("2d");
+		canvasWidth = canvas.width
+		canvasHeight = canvas.height
+    },
 	SetTitle: function (context, keyPressCounter) {
 		var json = {
 			"event": "setTitle",
@@ -82,25 +95,25 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 			numberdisplayAction.onWillAppear(context, settings, coordinates);
 		}
 		else if (event == "sendToPlugin") {
-			if (jsonPayload.hasOwnProperty('setValue')) {
-				var newValue = jsonPayload.setValue;
-				numberdisplayAction.SetSettings(context, { "keyPressCounter": newValue });
-				numberdisplayAction.SetTitle(context, newValue);
-			}
-			if (jsonPayload.hasOwnProperty('background-image')) {
-				const imageName = jsonPayload['background-image'];
-				loadImageAsDataUri(`${imageName}.png`, function (imgUrl) {
-					var json = {
-						"event": "setImage",
-						"context": context,
-						"payload": {
-							image: imgUrl || "",
-							target: DestinationEnum.HARDWARE_AND_SOFTWARE
-						}
-					};
-					websocket.send(JSON.stringify(json));
-				})
-			}
+			//if (jsonPayload.hasOwnProperty('setValue')) {
+			//	var newValue = jsonPayload.setValue;
+			//	numberdisplayAction.SetSettings(context, { "keyPressCounter": newValue });
+			//	numberdisplayAction.SetTitle(context, newValue);
+			//}
+			//if (jsonPayload.hasOwnProperty('background-image')) {
+			//	const imageName = jsonPayload['background-image'];
+			//	loadImageAsDataUri(`${imageName}.png`, function (imgUrl) {
+			//		var json = {
+			//			"event": "setImage",
+			//			"context": context,
+			//			"payload": {
+			//				image: imgUrl || "",
+			//				target: DestinationEnum.HARDWARE_AND_SOFTWARE
+			//			}
+			//		};
+			//		websocket.send(JSON.stringify(json));
+			//	})
+			//}
 			if (jsonPayload.hasOwnProperty('pi-save-button')) {
 				const payload = jsonPayload['pi-save-button'];
 				numberdisplayAction.SetSettings(context, payload);
@@ -112,15 +125,9 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 	};
 };
 function draw(context) {
-	//var canvas = document.createElement("canvas");
-	var canvas = document.getElementById("canvas")
-    canvas.width = 144;
-	canvas.height = 144;
-	var ctx = canvas.getContext("2d");
-	ctx.fillStyle = "blue";
-	ctx.fillRect(0,0,144,144);
+	canvasContext.fillStyle = "blue";
+	canvasContext.fillRect(0,0,144,144);
 	console.log(canvas)
-	console.log(canvas.toDataURL())
 	var json = {
     	"event": "setImage",
     	"context": context,
