@@ -3,7 +3,13 @@ var pluginUUID = null;
 var settingsCache = {};
 var DestinationEnum = Object.freeze({ "HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2 })
 
+// constants
 const textColor = "white";
+const font = "Lato";
+const multiplier = 1.0;
+const digits = 0;
+const textPadding = 10;
+const backgroundColor = "black";
 
 // canvas global vars
 var canvas;
@@ -16,9 +22,11 @@ var numberdisplayAction = {
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		let values = {last: 94.0, low: 20.30, high: 300.30}
+		let values = {last: 7432, low: 7320, high: 7500}
+		clearCanvas()
+		drawHighLow(values)
 		drawHighLowBar(values)
-		renderCanvas(context);
+		renderCanvas(context)
 		//settingsCache[context] = settings;
 		//WsTrade.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
 		//	.then(data => {
@@ -28,7 +36,7 @@ var numberdisplayAction = {
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
-		this.SetTitle(context, "yo.");
+		//this.SetTitle(context, "yo.");
 	},
 	initCanvas: function() {
         canvas = document.getElementById("canvas");
@@ -109,6 +117,26 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 		// Websocket is closed
 	};
 };
+function clearCanvas() {
+	canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
+	canvasContext.fillStyle = backgroundColor;
+	canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
+}
+function drawHighLow(values) {
+	canvasContext.fillStyle = textColor;
+	canvasContext.font = "25px "+font;
+	canvasContext.fillText(
+		this.getRoundedValue(values.low, digits, multiplier),
+		textPadding,
+		90
+	);
+	canvasContext.textAlign = "right";
+	canvasContext.fillText(
+		this.getRoundedValue(values.high, digits, multiplier),
+		canvasWidth-textPadding,
+		135
+	);
+}
 function drawHighLowBar(values) {
 	const lineY = 104;
 	const padding = 5;
@@ -136,6 +164,29 @@ function drawHighLowBar(values) {
 	canvasContext.lineTo(cursorPositionX, lineY + triangleHeight*2/3);
 	canvasContext.fillStyle = textColor;
 	canvasContext.fill();
+}
+function getRoundedValue (value, digits, multiplier) {
+	const digitPow = Math.pow(10, digits);
+
+	let valueString = ""+Math.round(value*multiplier*digitPow)/digitPow;
+
+	if (digits>0) {
+		// Make sure we always have the correct number of digits, even when rounded
+		let digitPosition = valueString.indexOf(".");
+		if (digitPosition<0) {
+			valueString+=".";
+			digitPosition = valueString.length - 1;
+		}
+
+		let actualDigits = valueString.length - digitPosition - 1;
+		while (actualDigits<digits) {
+			valueString+="0";
+			actualDigits++;
+		}
+	}
+
+
+	return valueString;
 }
 function renderCanvas(context) {
 	var json = {
