@@ -112,11 +112,12 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 	};
 };
 function draw(context) {
-	var canvas = document.createElement("canvas");
-	canvas.width = 144;
+	//var canvas = document.createElement("canvas");
+	var canvas = document.getElementById("canvas")
+    canvas.width = 144;
 	canvas.height = 144;
 	var ctx = canvas.getContext("2d");
-	ctx.fillStyle = "#FF0000";
+	ctx.fillStyle = "blue";
 	ctx.fillRect(0,0,144,144);
 	console.log(canvas)
 	console.log(canvas.toDataURL())
