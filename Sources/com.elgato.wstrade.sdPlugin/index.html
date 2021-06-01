@@ -24,13 +24,14 @@
 			},
 
 			onKeyUp: function (context, settings, coordinates, userDesiredState) {
-				settingsCache[context] = settings;
-
-				WsTrade.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
-					.then(data => {
-						let account_value = data.previous_close_net_liquidation_value.amount;
-						this.SetTitle(context, "$" + account_value.toFixed(0));
-					});
+				console.log("yoooo");
+				draw(context);
+				//settingsCache[context] = settings;
+				//WsTrade.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
+				//	.then(data => {
+				//		let account_value = data.previous_close_net_liquidation_value.amount;
+				//		this.SetTitle(context, "$" + account_value.toFixed(0));
+				//	});
 			},
 
 			onWillAppear: function (context, settings, coordinates) {
@@ -151,6 +152,27 @@
 				// Websocket is closed
 			};
 		};
+
+		function draw(context) {
+			var canvas = document.createElement("canvas");
+			canvas.width = 144;
+			canvas.height = 144;
+			var ctx = canvas.getContext("2d");
+			ctx.fillStyle = "#FF0000";
+			ctx.fillRect(0,0,144,144);
+			console.log(canvas)
+			console.log(canvas.toDataURL())
+			var json = {
+            	"event": "setImage",
+            	"context": context,
+            	"payload": {
+            	    "image": canvas.toDataURL(),
+            	    "target": DestinationEnum.HARDWARE_AND_SOFTWARE
+            	}
+        	}
+
+        	websocket.send(JSON.stringify(json));
+		}
 
 
 		function loadImageAsDataUri(url, callback) {

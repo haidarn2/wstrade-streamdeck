@@ -1,5 +1,5 @@
 const baseUrl = "https://trade-service.wealthsimple.com"
-var WsTrade = {
+var Client = {
     getAccounts: function(oauthToken, oauthToken) {
         return fetch(baseUrl + "/account/list", {
             headers: {"Authorization": "bearer " + oauthToken}
