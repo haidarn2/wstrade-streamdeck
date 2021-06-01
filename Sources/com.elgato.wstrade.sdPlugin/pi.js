@@ -43,9 +43,26 @@ function sendValueToPlugin(value, param) {
     }
 }
 
-function openMeExternal() {
+function openExternalLogin() {
     window.xtWindow = window.open('login_pi.html', "WS Trade Login");
     setTimeout(() => window.xtWindow.postMessage('initPropertyInspector', '*'), 1500);
+}
+
+function loginSubmit() {
+    // unhide otp
+    document.getElementById("otp-wrapper").style = "";
+}
+
+function otpSubmit() {
+    // unhide oauth
+    document.getElementById("login-oauth").value = "12345";
+    document.getElementById("login-oauth-refresh").value = "12345";
+    document.getElementById("login-oauth-expiry").value = "12345";
+    document.getElementById("oauth-wrapper").style = "";
+}
+
+function oauthVerify() {
+    console.log("sup tho");
 }
 
 function oauthChange() {

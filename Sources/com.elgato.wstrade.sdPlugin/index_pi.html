@@ -11,26 +11,11 @@
 
 <body>
     <script src="pi.js"></script>
-    
+
     <div class="sdpi-wrapper">
-        <div type="textarea" class="sdpi-item" id="required_text">
-            <div class="sdpi-item-label">WS Account ID</div>
-            <span class="sdpi-item-value">
-                <input type="text" id="account-id" placeholder="eg: non-registered-dsiofghe2" required></input>
-            </span>
-        </div>
-        <div type="textarea" class="sdpi-item" id="required_text">
-            <div class="sdpi-item-label">OAuth Token</div>
-            <span class="sdpi-item-value">
-                <input type="text" id="oauth-input" placeholder="Paste OAuth token" pattern=".{43}" title="Invalid OAuth token" oninput="oauthChange()" required></input>
-            </span>
-        </div>
-        <div class="sdpi-item">
-            <button class="sdpi-item-value" id="oauth-submit" onclick="oauthSubmit()" disabled="true">Save</button>
-       </div>
        <div class="sdpi-item" id="only_a_button">
-            <div class="sdpi-item-label">Button</div> 
-            <button onclick="openMeExternal()" class="sdpi-item-value" value="Click Me only">Click Me</button>
+            <div class="sdpi-item-label">Auth</div> 
+            <button onclick="openExternalLogin()" class="sdpi-item-value">Login</button>
         </div>
      <!--
         <div type="select" class="sdpi-item">

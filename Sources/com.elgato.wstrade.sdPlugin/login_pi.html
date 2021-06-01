@@ -12,22 +12,62 @@
 <body>
     <script src="pi.js"></script>
 
+    <details>
+        <summary>Why is email/pass login required?</summary>
+        <p>The WealthSimple Trade API is not a publicly available API. It currently doesn't support generating OAuth clients for external app integration.</p>
+        <p>Because of this, an email/password login is performed then an OAuth token is stripped from the response and stored in the plugin settings.</p>
+        <p>The stored OAuth token is kept alive via a hourly refresh. The provided email/password are not stored.</p>
+        <p>Unfortunately, if the refresh token has expired (eg offline for >2 hrs) a new login is required.</p>
+        <!--a href="#">More info...</a-->
+    </details>
+
     <div class="sdpi-wrapper">
+        <div class="sdpi-heading">STEP 1: ENTER CREDENTIALS</div>
         <div type="textarea" class="sdpi-item" id="required_text">
-            <div class="sdpi-item-label">WS Account ID</div>
-            <span class="sdpi-item-value">
-                <input type="text" id="account-id" placeholder="eg: non-registered-dsiofghe2" required></input>
-            </span>
+            <div class="sdpi-item-label">Email</div>
+            <input class="sdpi-item-value" type="text" id="login-email" placeholder="eg: example@example.com"></input>
         </div>
         <div type="textarea" class="sdpi-item" id="required_text">
-            <div class="sdpi-item-label">OAuth Token</div>
-            <span class="sdpi-item-value">
-                <input type="text" id="oauth-input" placeholder="Paste OAuth token" pattern=".{43}" title="Invalid OAuth token" oninput="oauthChange()" required></input>
-            </span>
+            <div class="sdpi-item-label">Password</div>
+            <input class="sdpi-item-value" type="text" id="login-password"></input>
         </div>
         <div class="sdpi-item">
-            <button class="sdpi-item-value" id="oauth-submit" onclick="oauthSubmit()" disabled="true">Save</button>
+            <div class="sdpi-item-label">Login</div>
+            <button class="sdpi-item-value" id="login-submit" onclick="loginSubmit()">Submit</button>
        </div>
+       
+       <div id="otp-wrapper" style="display: none;">
+            <div class="sdpi-heading" id="login-otp-header">STEP 2: ENTER 2FA / SMS</div>
+            <div type="textarea" class="sdpi-item" id="required_text">
+                <div class="sdpi-item-label" id="login-otp-label">OTP / 2FA</div>
+                <input class="sdpi-item-value" type="text" id="login-otp"></input>
+            </div>
+            <div class="sdpi-item">
+                <div class="sdpi-item-label" id="login-submit-label">Login</div>
+                <button class="sdpi-item-value" id="login-submit" onclick="otpSubmit()">Submit</button>
+            </div>
+        </div>
+
+        <div id="oauth-wrapper" style="display: none;">
+            <div class="sdpi-heading">STEP 3: VERIFY OAUTH</div>
+            <div type="textarea" class="sdpi-item">
+                <div class="sdpi-item-label">x-access-token</div>
+                <input class="sdpi-item-value" type="text" id="login-oauth" disabled></input>
+            </div>
+            <div type="textarea" class="sdpi-item">
+                <div class="sdpi-item-label">x-refresh-token</div>
+                <input class="sdpi-item-value" type="text" id="login-oauth-refresh" disabled></input>
+            </div>
+            <div type="textarea" class="sdpi-item">
+                <div class="sdpi-item-label">x-access-token-expires</div>
+                <input class="sdpi-item-value" type="text" id="login-oauth-expiry" disabled></input>
+            </div>
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">Verification</div>
+                <button class="sdpi-item-value" onclick="oauthVerify()">Verify Token</button>
+            </div>
+        </div>
+
     </div>
 
 </body>
