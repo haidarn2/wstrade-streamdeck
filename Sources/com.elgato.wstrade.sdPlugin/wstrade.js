@@ -25,7 +25,9 @@ var numberdisplayAction = {
 		Client.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
 			.then(data => {
 				let values = calculateValues(data)
+				console.log(values)
 				clearCanvas()
+				drawDailyChange(values)
 				drawLast(values)
 				drawHighLow(values)
 				drawHighLowBar(values)
@@ -35,7 +37,6 @@ var numberdisplayAction = {
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
-		//this.SetTitle(context, "yo.");
 	},
 	initCanvas: function() {
         canvas = document.getElementById("canvas");
@@ -120,6 +121,31 @@ function clearCanvas() {
 	canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
 	canvasContext.fillStyle = backgroundColor;
 	canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
+}
+function drawDailyChange(values) {
+	canvasContext.save()
+	const changePercent = (1 - (values.last / values.first)) * 100;
+	let digitsPercent = 2;
+	if (Math.abs(changePercent)>=10) {
+		digitsPercent = 1;
+	} else if (Math.abs(changePercent)>=10) {
+		digitsPercent = 0;
+	}
+	let changePercentDisplay = this.getRoundedValue(changePercent, digitsPercent, 1);
+	if (changePercent>0) {
+		changePercentDisplay = "+" + changePercentDisplay;
+		canvasContext.fillStyle = "green";
+	} else {
+		canvasContext.fillStyle = "red";
+	}
+	canvasContext.font = "19px "+font;
+	canvasContext.textAlign = "right";
+	canvasContext.fillText(
+		changePercentDisplay + "%",
+		canvasWidth-textPadding,
+		90
+	);
+	canvasContext.restore()
 }
 function drawLast(values) {
 	canvasContext.save()
@@ -216,11 +242,15 @@ function renderCanvas(context) {
 	websocket.send(JSON.stringify(json));
 }
 function calculateValues(data) {
-	let last = data.previous_close_net_liquidation_value.amount;
+	let first = data.results.reduce((i, acc) => new Date(i.date) < new Date(acc.date) ? i : acc)
+	let last = data.results.reduce((i, acc) => new Date(i.date) > new Date(acc.date) ? i : acc)
+	let high = data.results.reduce((i, acc) => i.value.amount > acc.value.amount ? i : acc)
+	let low = data.results.reduce((i, acc) => i.value.amount < acc.value.amount ? i : acc)
 	return {
-		accType: "PERSONAL", 
-		last: last, 
-		low: 6100, 
-		high: 7500
+		accType: "TFSA", 
+		last: last.value.amount,
+		first: first.value.amount,
+		low: low.value.amount,
+		high: high.value.amount
 	}
 }
