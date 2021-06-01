@@ -43,6 +43,11 @@ function sendValueToPlugin(value, param) {
     }
 }
 
+function openMeExternal() {
+    window.xtWindow = window.open('index_pi.html', "PI Samples");
+    setTimeout(() => window.xtWindow.postMessage('initPropertyInspector', '*'), 1500);
+}
+
 function oauthChange() {
     document.getElementById("oauth-submit").disabled = !document.getElementById("oauth-input").checkValidity();
 }
