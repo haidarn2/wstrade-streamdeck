@@ -22,17 +22,16 @@ var numberdisplayAction = {
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		let values = {last: 7432, low: 7320, high: 7500}
-		clearCanvas()
-		drawHighLow(values)
-		drawHighLowBar(values)
-		renderCanvas(context)
-		//settingsCache[context] = settings;
-		//WsTrade.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
-		//	.then(data => {
-		//		let account_value = data.previous_close_net_liquidation_value.amount;
-		//		this.SetTitle(context, "$" + account_value.toFixed(0));
-		//	});
+		Client.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
+			.then(data => {
+				let values = calculateValues(data)
+				clearCanvas()
+				drawLast(values)
+				drawHighLow(values)
+				drawHighLowBar(values)
+				renderCanvas(context)
+			});
+		
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
@@ -122,7 +121,23 @@ function clearCanvas() {
 	canvasContext.fillStyle = backgroundColor;
 	canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
 }
+function drawLast(values) {
+	canvasContext.save()
+	canvasContext.font = "25px "+font;
+	canvasContext.fillStyle = textColor;
+	canvasContext.textAlign = "left";
+	canvasContext.fillText(values.accType, 10, 25);
+	canvasContext.font = "bold 35px "+font;
+	canvasContext.fillText(
+		"$" + this.getRoundedValue(values.last, digits, multiplier),
+		textPadding,
+		60
+	);
+	canvasContext.restore()
+}
 function drawHighLow(values) {
+	canvasContext.save();
+	canvasContext.textAlign = "start";
 	canvasContext.fillStyle = textColor;
 	canvasContext.font = "25px "+font;
 	canvasContext.fillText(
@@ -136,6 +151,7 @@ function drawHighLow(values) {
 		canvasWidth-textPadding,
 		135
 	);
+	canvasContext.restore();
 }
 function drawHighLowBar(values) {
 	const lineY = 104;
@@ -146,6 +162,7 @@ function drawHighLowBar(values) {
 	const cursorPositionX = padding+Math.round(lineLength*percent);
 	const triangleSide = 12;
 	const triangleHeight = Math.sqrt(3/4*Math.pow(triangleSide,2));
+	canvasContext.save();
 	canvasContext.beginPath();
 	canvasContext.moveTo(padding, lineY);
 	canvasContext.lineTo(cursorPositionX, lineY);
@@ -164,6 +181,7 @@ function drawHighLowBar(values) {
 	canvasContext.lineTo(cursorPositionX, lineY + triangleHeight*2/3);
 	canvasContext.fillStyle = textColor;
 	canvasContext.fill();
+	canvasContext.restore();
 }
 function getRoundedValue (value, digits, multiplier) {
 	const digitPow = Math.pow(10, digits);
@@ -184,8 +202,6 @@ function getRoundedValue (value, digits, multiplier) {
 			actualDigits++;
 		}
 	}
-
-
 	return valueString;
 }
 function renderCanvas(context) {
@@ -198,4 +214,13 @@ function renderCanvas(context) {
     	}
 	}
 	websocket.send(JSON.stringify(json));
+}
+function calculateValues(data) {
+	let last = data.previous_close_net_liquidation_value.amount;
+	return {
+		accType: "PERSONAL", 
+		last: last, 
+		low: 6100, 
+		high: 7500
+	}
 }
