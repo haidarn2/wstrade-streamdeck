@@ -6,21 +6,11 @@
     <title>com.elgato.wstrade PI</title>
     <link rel="stylesheet" href="sdpi.css">
     <script src="common.js"></script>
-    <script>
-        function oauthChange() {
-            document.getElementById("oauth-submit").disabled = !document.getElementById("oauth-input").checkValidity();
-        }
-        function oauthSubmit() {
-            let payload = {
-                "accountId": document.getElementById("account-id").value,
-                "oauthToken": document.getElementById("oauth-input").value
-            }
-            sendValueToPlugin(payload, 'pi-save-button');
-        }
-    </script>
+
 </head>
 
 <body>
+    <script src="pi.js"></script>
     
     <div class="sdpi-wrapper">
         <div type="textarea" class="sdpi-item" id="required_text">
@@ -38,6 +28,10 @@
         <div class="sdpi-item">
             <button class="sdpi-item-value" id="oauth-submit" onclick="oauthSubmit()" disabled="true">Save</button>
        </div>
+       <div class="sdpi-item" id="only_a_button">
+            <div class="sdpi-item-label">Button</div> 
+            <button onclick="openMeExternal()" class="sdpi-item-value" value="Click Me only">Click Me</button>
+        </div>
      <!--
         <div type="select" class="sdpi-item">
             <div class="sdpi-item-label">Change Value</div>
@@ -71,55 +65,6 @@
         </div> 
         -->
     </div>
-
-    <script>
-        var pluginAction = null,
-            uuid = '',
-            aValueSlider = document.querySelectorAll('.setvalueSlider'),
-            oValueSelector = document.querySelector(".setvalueSelect");
-
-        if ($SD) {
-            $SD.on('connected', function (jsonObj) {
-                uuid = jsonObj['uuid'];
-                if (jsonObj.hasOwnProperty('actionInfo')) {
-                    pluginAction = jsonObj.actionInfo['action'];
-                }
-            });
-        };
-
-        /** you can also use ES6 syntax like so:
-        *
-        *   if ($SD) $SD.on('connected', (jsonObj) => { uuid=jsonObj.uuid }));
-        *    
-        */
-
-        function sendValueToPlugin(value, param) {
-
-            // console.log("SENDING VALUE TO PLUGIN: ", value, uuid, pluginAction);
-            if (param === 'setValue') {
-
-                aValueSlider && Array.prototype.forEach.call(aValueSlider, function (ctl) {
-                    ctl.value = value;
-                })
-
-                oValueSelector && Array.prototype.forEach.call(oValueSelector.options, function (o) {
-                    const val = Math.round(value);
-                    if (o.value !== val) {
-                        oValueSelector.value = val;
-                    }
-                })
-            }
-
-            if ($SD && $SD.connection) {
-                var payload = {};
-                if (param) {
-                    payload[param] = value;
-                }
-                $SD.api.sendToPlugin(uuid, pluginAction, payload);
-            }
-        }
-
-    </script>
 
 </body>
 

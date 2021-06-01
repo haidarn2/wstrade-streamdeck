@@ -22,7 +22,7 @@
   "Name": "Wealthsimple Trade (Unofficial)",
   "Icon": "pluginIcon",
   "URL": "https://github.com/haidarn2/wstrade-streamdeck",
-  "PropertyInspectorPath": "numberdisplay_pi.html",
+  "PropertyInspectorPath": "index_pi.html",
   "Version": "0.1",
   "OS": [
     {
