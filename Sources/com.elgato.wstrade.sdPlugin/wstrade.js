@@ -95,25 +95,6 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 			numberdisplayAction.onWillAppear(context, settings, coordinates);
 		}
 		else if (event == "sendToPlugin") {
-			//if (jsonPayload.hasOwnProperty('setValue')) {
-			//	var newValue = jsonPayload.setValue;
-			//	numberdisplayAction.SetSettings(context, { "keyPressCounter": newValue });
-			//	numberdisplayAction.SetTitle(context, newValue);
-			//}
-			//if (jsonPayload.hasOwnProperty('background-image')) {
-			//	const imageName = jsonPayload['background-image'];
-			//	loadImageAsDataUri(`${imageName}.png`, function (imgUrl) {
-			//		var json = {
-			//			"event": "setImage",
-			//			"context": context,
-			//			"payload": {
-			//				image: imgUrl || "",
-			//				target: DestinationEnum.HARDWARE_AND_SOFTWARE
-			//			}
-			//		};
-			//		websocket.send(JSON.stringify(json));
-			//	})
-			//}
 			if (jsonPayload.hasOwnProperty('pi-save-button')) {
 				const payload = jsonPayload['pi-save-button'];
 				numberdisplayAction.SetSettings(context, payload);
@@ -126,7 +107,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 };
 function draw(context) {
 	canvasContext.fillStyle = "blue";
-	canvasContext.fillRect(0,0,144,144);
+	canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
 	console.log(canvas)
 	var json = {
     	"event": "setImage",
@@ -138,15 +119,3 @@ function draw(context) {
 	}
 	websocket.send(JSON.stringify(json));
 }
-function loadImageAsDataUri(url, callback) {
-	var image = new Image();
-	image.onload = function () {
-		var canvas = document.createElement("canvas");
-		canvas.width = this.naturalWidth;
-		canvas.height = this.naturalHeight;
-		var ctx = canvas.getContext("2d");
-		ctx.drawImage(this, 0, 0);
-		callback(canvas.toDataURL("image/png"));
-	};
-	image.src = url;
-};
