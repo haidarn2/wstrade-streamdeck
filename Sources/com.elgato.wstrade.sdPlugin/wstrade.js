@@ -3,6 +3,8 @@ var pluginUUID = null;
 var settingsCache = {};
 var DestinationEnum = Object.freeze({ "HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2 })
 
+const textColor = "white";
+
 // canvas global vars
 var canvas;
 var canvasContext;
@@ -14,7 +16,9 @@ var numberdisplayAction = {
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		draw(context);
+		let values = {last: 94.0, low: 20.30, high: 300.30}
+		drawHighLowBar(values)
+		renderCanvas(context);
 		//settingsCache[context] = settings;
 		//WsTrade.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
 		//	.then(data => {
@@ -105,10 +109,35 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 		// Websocket is closed
 	};
 };
-function draw(context) {
-	canvasContext.fillStyle = "blue";
-	canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
-	console.log(canvas)
+function drawHighLowBar(values) {
+	const lineY = 104;
+	const padding = 5;
+	const lineWidth = 6;
+	const percent = (values.last - values.low)/(values.high - values.low);
+	const lineLength = canvasWidth-padding*2;
+	const cursorPositionX = padding+Math.round(lineLength*percent);
+	const triangleSide = 12;
+	const triangleHeight = Math.sqrt(3/4*Math.pow(triangleSide,2));
+	canvasContext.beginPath();
+	canvasContext.moveTo(padding, lineY);
+	canvasContext.lineTo(cursorPositionX, lineY);
+	canvasContext.lineWidth = lineWidth;
+	canvasContext.strokeStyle = "green";
+	canvasContext.stroke();
+	canvasContext.beginPath();
+	canvasContext.moveTo(cursorPositionX, lineY);
+	canvasContext.lineTo(canvasWidth-padding, lineY);
+	canvasContext.lineWidth = lineWidth;
+	canvasContext.strokeStyle = "red";
+	canvasContext.stroke();
+	canvasContext.beginPath();
+	canvasContext.moveTo(cursorPositionX - triangleSide/2, lineY - triangleHeight/3);
+	canvasContext.lineTo(cursorPositionX + triangleSide/2, lineY - triangleHeight/3);
+	canvasContext.lineTo(cursorPositionX, lineY + triangleHeight*2/3);
+	canvasContext.fillStyle = textColor;
+	canvasContext.fill();
+}
+function renderCanvas(context) {
 	var json = {
     	"event": "setImage",
     	"context": context,
