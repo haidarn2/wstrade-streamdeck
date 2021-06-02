@@ -50,16 +50,27 @@ function openExternalLogin() {
 
 function loginSubmit() {
     let req = {
-        "email": document.getElementById("login-email").value,
-        "password": document.getElementById("login-password").value
+        email: document.getElementById("login-email").value,
+        password: document.getElementById("login-password").value
     }
-    console.log(req);
-    Client.login(req);
+    Client.login(req)
+    .then((resp) => {
+        console.log(resp)
+        for (var pair of resp.headers.entries()) {
+          console.log(pair[0]+ ': '+ pair[1]);
+        }
+      })
     // unhide otp
     document.getElementById("otp-wrapper").style = "";
 }
 
 function otpSubmit() {
+    let req = {
+        email: document.getElementById("login-email").value,
+        password: document.getElementById("login-password").value,
+        otp: document.getElementById("login-otp").value
+    }
+    Client.login(req);
     // unhide oauth
     document.getElementById("login-oauth").value = "12345";
     document.getElementById("login-oauth-refresh").value = "12345";

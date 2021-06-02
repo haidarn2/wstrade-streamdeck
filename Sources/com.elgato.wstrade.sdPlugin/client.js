@@ -2,10 +2,15 @@ const baseUrl = "https://trade-service.wealthsimple.com"
 var Client = {
     login: function(body){
         return fetch(baseUrl + "/auth/login", {
+            headers: {
+                "Accept": "application/json", 
+                "Content-Type": "application/json"
+            },
             method: "POST",
-            body: body
+            body: JSON.stringify(body)
         })
-            .then(response => console.log(response))
+        //.then(response => response.json())
+        //.then(json => console.log(json))
     },
     getAccounts: function(oauthToken, oauthToken) {
         return fetch(baseUrl + "/account/list", {
