@@ -9,8 +9,20 @@ var Client = {
             method: "POST",
             body: JSON.stringify(body)
         })
+        .then((response) => console.log(response))
         //.then(response => response.json())
         //.then(json => console.log(json))
+    },
+    loginXhr: function(body) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", baseUrl + "/auth/login");
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify(body));
+        xhr.onload = function() {
+            console.log(xhr)
+            console.log(xhr.getAllResponseHeaders())
+        }
     },
     getAccounts: function(oauthToken, oauthToken) {
         return fetch(baseUrl + "/account/list", {
@@ -25,5 +37,12 @@ var Client = {
             headers: {"Authorization": "bearer " + oauthToken}
         })
             .then(response => response.json())
+    },
+    parseResponseHeaders: function (headerStr) {
+        return Object.fromEntries(
+            (headerStr || '').split('\u000d\u000a') // '\n'
+                .map(line => line.split('\u003a\u0020')) // ": "
+                .filter(pair => pair[0] !== undefined && pair[1] !== undefined)
+        );
     }
 }
