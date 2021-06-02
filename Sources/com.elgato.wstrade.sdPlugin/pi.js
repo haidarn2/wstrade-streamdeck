@@ -54,18 +54,10 @@ function loginSubmit() {
         password: document.getElementById("login-password").value
     }
     Client.loginXhr(req)
-    .then((resp) => resp.getAllResponseHeaders())
-    .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
-    .then((headers) => console.log(headers));
-    //Client.login(req)
-    //.then((resp) => {
-    //    console.log(resp)
-    //    for (var pair of resp.headers.entries()) {
-    //      console.log(pair[0]+ ': '+ pair[1]);
-    //    }
-    //  })
-    // unhide otp
-    document.getElementById("otp-wrapper").style = "";
+    .then((resp) => {
+        // unhide otp
+        document.getElementById("otp-wrapper").style = "";
+    })
 }
 
 function otpSubmit() {
@@ -74,12 +66,16 @@ function otpSubmit() {
         password: document.getElementById("login-password").value,
         otp: document.getElementById("login-otp").value
     }
-    Client.loginXhr(req);
-    // unhide oauth
-    document.getElementById("login-oauth").value = "12345";
-    document.getElementById("login-oauth-refresh").value = "12345";
-    document.getElementById("login-oauth-expiry").value = new Date("1622594420" * 1000);
-    document.getElementById("oauth-wrapper").style = "";
+    Client.loginXhr(req)
+    .then((resp) => resp.getAllResponseHeaders())
+    .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
+    .then((headers) => {
+        document.getElementById("login-oauth").value = headers["x-access-token"];
+        document.getElementById("login-oauth-refresh").value = headers["x-refresh-token"];
+        document.getElementById("login-oauth-expiry").value = new Date(headers["x-access-token-expires"] * 1000);
+        // unhide oauth
+        document.getElementById("oauth-wrapper").style = "";
+    })
 }
 
 function oauthVerify() {
