@@ -79,17 +79,24 @@ function otpSubmit() {
 }
 
 function oauthVerify() {
-    console.log("sup tho");
-}
-
-function oauthChange() {
-    document.getElementById("oauth-submit").disabled = !document.getElementById("oauth-input").checkValidity();
-}
-
-function oauthSubmit() {
     let payload = {
-        "accountId": document.getElementById("account-id").value,
-        "oauthToken": document.getElementById("oauth-input").value
+        "x-access-token": document.getElementById("login-oauth").value,
+        "x-refresh-token": document.getElementById("login-oauth-refresh"),
+        "x-access-token-expires": document.getElementById("login-oauth-expiry").value,
+        "accountId": "non-registered-gsdjith2"
     }
-    sendValueToPlugin(payload, 'pi-save-button');
+    sendValueToPlugin(payload, 'save-oauth');
+    window.close();
 }
+
+//function oauthChange() {
+//    document.getElementById("oauth-submit").disabled = !document.getElementById("oauth-input").checkValidity();
+//}
+//
+//function oauthSubmit() {
+//    let payload = {
+//        "accountId": document.getElementById("account-id").value,
+//        "oauthToken": document.getElementById("oauth-input").value
+//    }
+//    sendValueToPlugin(payload, 'pi-save-button');
+//}

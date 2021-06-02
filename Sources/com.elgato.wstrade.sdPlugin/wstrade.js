@@ -22,7 +22,7 @@ var numberdisplayAction = {
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		Client.accountHistory(settings["oauthToken"], settings["accountId"], "1d")
+		Client.accountHistory(settings["x-access-token"], settings["accountId"], "1d")
 			.then(data => {
 				let values = calculateValues(data)
 				console.log(values)
@@ -107,8 +107,8 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 			numberdisplayAction.onWillAppear(context, settings, coordinates);
 		}
 		else if (event == "sendToPlugin") {
-			if (jsonPayload.hasOwnProperty('pi-save-button')) {
-				const payload = jsonPayload['pi-save-button'];
+			if (jsonPayload.hasOwnProperty('save-oauth')) {
+				const payload = jsonPayload['save-oauth'];
 				numberdisplayAction.SetSettings(context, payload);
 			}
 		}
