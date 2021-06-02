@@ -53,7 +53,10 @@ function loginSubmit() {
         email: document.getElementById("login-email").value,
         password: document.getElementById("login-password").value
     }
-    Client.loginXhr(req);
+    Client.loginXhr(req)
+    .then((resp) => resp.getAllResponseHeaders())
+    .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
+    .then((headers) => console.log(headers));
     //Client.login(req)
     //.then((resp) => {
     //    console.log(resp)

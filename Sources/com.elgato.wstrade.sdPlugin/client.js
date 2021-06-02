@@ -14,15 +14,16 @@ var Client = {
         //.then(json => console.log(json))
     },
     loginXhr: function(body) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", baseUrl + "/auth/login");
-        xhr.setRequestHeader("Accept", "application/json");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify(body));
-        xhr.onload = function() {
-            console.log(xhr)
-            console.log(xhr.getAllResponseHeaders())
-        }
+        return new Promise(function (resolve, reject) {
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", baseUrl + "/auth/login");
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = resolve;
+            xhr.onerror = reject;
+            xhr.send(JSON.stringify(body));
+        })
+        .then((resp) => resp.target);
     },
     getAccounts: function(oauthToken, oauthToken) {
         return fetch(baseUrl + "/account/list", {
