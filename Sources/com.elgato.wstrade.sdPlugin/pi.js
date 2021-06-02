@@ -57,7 +57,7 @@ function otpSubmit() {
     // unhide oauth
     document.getElementById("login-oauth").value = "12345";
     document.getElementById("login-oauth-refresh").value = "12345";
-    document.getElementById("login-oauth-expiry").value = "12345";
+    document.getElementById("login-oauth-expiry").value = new Date("1622594420" * 1000)
     document.getElementById("oauth-wrapper").style = "";
 }
 
