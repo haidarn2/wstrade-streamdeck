@@ -1,19 +1,7 @@
 const baseUrl = "https://trade-service.wealthsimple.com"
 var Client = {
-    login: function(body){
-        return fetch(baseUrl + "/auth/login", {
-            headers: {
-                "Accept": "application/json", 
-                "Content-Type": "application/json"
-            },
-            method: "POST",
-            body: JSON.stringify(body)
-        })
-        .then((response) => console.log(response))
-        //.then(response => response.json())
-        //.then(json => console.log(json))
-    },
-    loginXhr: function(body) {
+    login: function(body) {
+        // use xhr for login endpoint because fetch enforces CORS and won't let us get response headers :sadge:
         return new Promise(function (resolve, reject) {
             let xhr = new XMLHttpRequest();
             xhr.open("POST", baseUrl + "/auth/login");

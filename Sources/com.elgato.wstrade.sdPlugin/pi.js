@@ -53,7 +53,7 @@ function loginSubmit() {
         email: document.getElementById("login-email").value,
         password: document.getElementById("login-password").value
     }
-    Client.loginXhr(req)
+    Client.login(req)
     .then((resp) => {
         // unhide otp
         document.getElementById("otp-wrapper").style = "";
@@ -66,7 +66,7 @@ function otpSubmit() {
         password: document.getElementById("login-password").value,
         otp: document.getElementById("login-otp").value
     }
-    Client.loginXhr(req)
+    Client.login(req)
     .then((resp) => resp.getAllResponseHeaders())
     .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
     .then((headers) => {
