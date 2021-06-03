@@ -21,7 +21,7 @@ var numberdisplayAction = {
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		Client.accountHistory(settings["x-access-token"], settings["accountId"], "1d")
+		Client.accountHistory(settings["x-access-token"], settings["accountId"], settings["timeWindow"] || "1d")
 			.then(data => {
 				let values = calculateValues(data)
 				console.log(values)

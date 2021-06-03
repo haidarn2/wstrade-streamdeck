@@ -22,18 +22,18 @@
         <div class="sdpi-heading">General</div>
         <div type="radio" class="sdpi-item" id="time-window-radio">
             <div class="sdpi-item-label">Data Window</div>
-            <div class="sdpi-item-value ">
+            <div class="sdpi-item-value " id="window">
                 <span class="sdpi-item-child">
-                    <input id="rdio1" type="radio" value="1d" name="rdio" checked>
-                    <label for="rdio1" class="sdpi-item-label"><span></span>1d</label>
+                    <input id="setting_window_1d" type="radio" value="1d" name="setting_window" onclick="updateSettings()" checked>
+                    <label for="setting_window_1d" class="sdpi-item-label"><span></span>1d</label>
                 </span>
                 <span class="sdpi-item-child">
-                    <input id="rdio2" type="radio" value="1w" name="rdio">
-                    <label for="rdio2" class="sdpi-item-label"><span></span>1w</label>
+                    <input id="setting_window_1w" type="radio" value="1w" name="setting_window" onclick="updateSettings()">
+                    <label for="setting_window_1w" class="sdpi-item-label"><span></span>1w</label>
                 </span>
                 <span class="sdpi-item-child">
-                    <input id="rdio3" type="radio" value="1m" name="rdio">
-                    <label for="rdio3" class="sdpi-item-label"><span></span>1m</label>
+                    <input id="setting_window_1m" type="radio" value="1m" name="setting_window" onclick="updateSettings()">
+                    <label for="setting_window_1m" class="sdpi-item-label"><span></span>1m</label>
                 </span>
             </div>
         </div>
@@ -41,12 +41,12 @@
             <div class="sdpi-item-label">Format</div>
             <div class="sdpi-item-value ">
                 <span class="sdpi-item-child">
-                    <input id="f-rdio1" type="radio" value="1d" name="f-rdio" checked>
-                    <label for="f-rdio1" class="sdpi-item-label"><span></span>$12345</label>
+                    <input id="setting_money_long" type="radio" value="long" name="setting_money" onclick="updateSettings()" checked>
+                    <label for="setting_money_long" class="sdpi-item-label"><span></span>$12345</label>
                 </span>
                 <span class="sdpi-item-child">
-                    <input id="f-rdio2" type="radio" value="1w" name="f-rdio">
-                    <label for="f-rdio2" class="sdpi-item-label"><span></span>$12.3k</label>
+                    <input id="setting_money_short" type="radio" value="short" name="setting_money" onclick="updateSettings()">
+                    <label for="setting_money_short" class="sdpi-item-label"><span></span>$12.3k</label>
                 </span>
             </div>
         </div>

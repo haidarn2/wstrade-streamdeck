@@ -49,7 +49,7 @@ $SD.on('connected', (jsn) => {
      */
 
     settings = Utils.getProp(jsn, 'actionInfo.payload.settings', false);
-    console.log(settings);
+    refreshSettings();
 });
  
 /**
@@ -121,6 +121,26 @@ function sendValueToPlugin(value, prop) {
 
         $SD.connection.send(JSON.stringify(json));
     }
+}
+
+function refreshSettings() {
+    let timeWindow = settings["timeWindow"] || "1d"
+    document.getElementById("setting_window_" + timeWindow).checked = true;
+    let moneyFormat = settings["moneyFormat"] || "long"
+    document.getElementById("setting_money_" + moneyFormat).checked = true;
+}
+
+function updateSettings(){
+    let window = [...document.getElementsByName("setting_window")].find((e) => e.checked).value
+    let moneyFormat = [...document.getElementsByName("setting_money")].find((e) => e.checked).value
+    saveSettings({
+        key: "timeWindow",
+        value: window
+    });
+    saveSettings({
+        key: "moneyFormat",
+        value: moneyFormat
+    });
 }
 
 function openExternalLogin() {
