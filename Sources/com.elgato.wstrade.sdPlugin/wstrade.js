@@ -1,6 +1,8 @@
 var websocket = null;
 var pluginUUID = null;
 var DestinationEnum = Object.freeze({ "HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2 })
+var oauthRefreshTimeout = null;
+var renderRefreshTimeout = null;
 
 // constants
 const textColor = "white";
@@ -31,6 +33,10 @@ var numberdisplayAction = {
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
+		registerTimers();
+	},
+	onWillDisappear: function (context, settings, coordinates) {
+		//deregisterTimers();
 	},
 	initCanvas: function() {
         canvas = document.getElementById("canvas");
@@ -116,6 +122,11 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 			var settings = jsonPayload['settings'];
 			var coordinates = jsonPayload['coordinates'];
 			numberdisplayAction.onWillAppear(context, settings, coordinates);
+		}
+		else if (event == "willDisappear") {
+			var settings = jsonPayload['settings'];
+			var coordinates = jsonPayload['coordinates'];
+			numberdisplayAction.onWillDisappear(context, settings, coordinates);
 		}
 		else if (event == "didReceiveSettings") {
 			console.log(jsonPayload);
@@ -275,4 +286,18 @@ function calculateValues(data) {
 		low: low.value.amount,
 		high: high.value.amount
 	}
+}
+
+function registerTimers() {
+	console.log("register Timers")
+	if (oauthRefreshTimeout) {
+		clearTimeout(oauthRefreshTimeout);
+		oauthRefreshTimeout = null;
+	}
+	if (renderRefreshTimeout) {
+		clearTimeout(renderRefreshTimeout);
+		renderRefreshTimeout = null;
+	}
+	oauthRefreshTimeout = setInterval(() => console.log("Oauth refresh tick: " + new Date()), 60 * 60 * 1000);
+	renderRefreshTimeout = setInterval(() => console.log("render refresh tick: " + new Date()), 15 * 60 * 1000);
 }
