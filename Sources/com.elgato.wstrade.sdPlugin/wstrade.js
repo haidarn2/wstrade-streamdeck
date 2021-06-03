@@ -73,7 +73,7 @@ var numberdisplayAction = {
 	ShowAlert: function(context) {
 		var json = {
 			"event": "showAlert",
-			"context": context,
+			"context": context
 		};
 		websocket.send(JSON.stringify(json));
 	}
@@ -116,12 +116,6 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 			var settings = jsonPayload['settings'];
 			var coordinates = jsonPayload['coordinates'];
 			numberdisplayAction.onWillAppear(context, settings, coordinates);
-		}
-		else if (event == "sendToPlugin") {
-			if (jsonPayload.hasOwnProperty('save-oauth')) {
-				let payload = jsonPayload['save-oauth'];
-				numberdisplayAction.SetSettings(context, payload);
-			}
 		}
 		else if (event == "didReceiveSettings") {
 			console.log(jsonPayload);

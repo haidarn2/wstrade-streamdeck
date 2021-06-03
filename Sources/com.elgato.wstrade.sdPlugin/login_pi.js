@@ -56,7 +56,7 @@ function saveAndClose() {
         "accountType": account.type,
         "accountId": account.id
     }
-    window.opener.sendValueToPlugin(payload, 'save-oauth');
+    window.opener.saveSettings(payload);
     window.opener.refreshSettings();
     window.close();
 }
