@@ -21,24 +21,13 @@ var numberdisplayAction = {
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		if (!settings["x-access-token"] || new Date() > new Date(settings["x-access-token-expires"])) {
+		console.log(settings);
+		if (!settings["x-access-token-expires"] || new Date() > new Date(settings["x-access-token-expires"])) {
 			console.log("not authenticated!");
 			this.ShowAlert(context);
 			return;
 		}
-		console.log("fetching account history...");
-		Client.accountHistory(settings["x-access-token"], settings["accountId"], settings["timeWindow"] || "1d")
-			.then(data => {
-				let values = calculateValues(data)
-				console.log(values)
-				clearCanvas()
-				drawDailyChange(values)
-				drawLast(values, settings["accountType"])
-				drawHighLow(values)
-				drawHighLowBar(values)
-				renderCanvas(context)
-			});
-		
+		this.updateCanvas(context, settings);
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
@@ -49,6 +38,19 @@ var numberdisplayAction = {
 		canvasWidth = canvas.width
 		canvasHeight = canvas.height
     },
+	updateCanvas: function(context, settings) {
+		console.log("refreshing...");
+		Client.accountHistory(settings["x-access-token"], settings["accountId"], settings["timeWindow"] || "1d")
+		.then(data => {
+			let values = calculateValues(data);
+			clearCanvas();
+			drawDailyChange(values);
+			drawLast(values, settings["accountType"]);
+			drawHighLow(values);
+			drawHighLowBar(values);
+			renderCanvas(context);
+		});
+	},
 	SetTitle: function (context, keyPressCounter) {
 		var json = {
 			"event": "setTitle",
@@ -117,9 +119,13 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 		}
 		else if (event == "sendToPlugin") {
 			if (jsonPayload.hasOwnProperty('save-oauth')) {
-				const payload = jsonPayload['save-oauth'];
+				let payload = jsonPayload['save-oauth'];
 				numberdisplayAction.SetSettings(context, payload);
 			}
+		}
+		else if (event == "didReceiveSettings") {
+			console.log(jsonPayload);
+			console.log("didReceiveSettings in plugin!!");
 		}
 	};
 	websocket.onclose = function () {
