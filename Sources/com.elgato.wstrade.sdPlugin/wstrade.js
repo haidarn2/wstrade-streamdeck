@@ -1,6 +1,5 @@
 var websocket = null;
 var pluginUUID = null;
-var settingsCache = {};
 var DestinationEnum = Object.freeze({ "HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2 })
 
 // constants
@@ -28,7 +27,7 @@ var numberdisplayAction = {
 				console.log(values)
 				clearCanvas()
 				drawDailyChange(values)
-				drawLast(values)
+				drawLast(values, settings["accountType"])
 				drawHighLow(values)
 				drawHighLowBar(values)
 				renderCanvas(context)
@@ -62,9 +61,6 @@ var numberdisplayAction = {
 			"payload": settings
 		};
 		websocket.send(JSON.stringify(json));
-	},
-	AddToSettings: function (context, newSettings) {
-		settingsCache[context]
 	}
 };
 function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo) {
@@ -147,12 +143,12 @@ function drawDailyChange(values) {
 	);
 	canvasContext.restore()
 }
-function drawLast(values) {
+function drawLast(values, accType) {
 	canvasContext.save()
 	canvasContext.font = "25px "+font;
 	canvasContext.fillStyle = textColor;
 	canvasContext.textAlign = "left";
-	canvasContext.fillText(values.accType, 10, 25);
+	canvasContext.fillText(accType, 10, 25);
 	canvasContext.font = "bold 35px "+font;
 	canvasContext.fillText(
 		"$" + this.getRoundedValue(values.last, digits, multiplier),
@@ -247,7 +243,6 @@ function calculateValues(data) {
 	let high = data.results.reduce((i, acc) => i.value.amount > acc.value.amount ? i : acc)
 	let low = data.results.reduce((i, acc) => i.value.amount < acc.value.amount ? i : acc)
 	return {
-		accType: "TFSA", 
 		last: last.value.amount,
 		first: first.value.amount,
 		low: low.value.amount,

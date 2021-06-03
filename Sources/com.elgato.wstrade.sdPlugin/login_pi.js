@@ -35,24 +35,26 @@ function otpSubmit() {
             : acc.id.startsWith('rrsp') ? 'RRSP'
             : acc.id.startsWith('non-registered-crypto') ? 'CRYPTO'
             : 'PERSONAL';
-            return {label: type + " " + acc.id, id: acc.id}
+            return {type: type, id: acc.id}
           });
         let account_selector = document.getElementById("account-select");
         accounts.forEach((acc) => {
             let opt = document.createElement("option");
-            opt.value = acc.id;
-            opt.innerHTML = acc.label;
+            opt.value = JSON.stringify(acc);
+            opt.innerHTML = acc.type + " " + acc.id;
             account_selector.appendChild(opt);
         })
     })
 }
 
 function oauthVerify() {
+    let account = JSON.parse(document.getElementById("account-select").value)
     let payload = {
         "x-access-token": document.getElementById("login-oauth").innerHTML,
         "x-refresh-token": document.getElementById("login-oauth-refresh").innerHTML,
         "x-access-token-expires": document.getElementById("login-oauth-expiry").innerHTML,
-        "accountId": document.getElementById("account-select").value
+        "accountType": account.type,
+        "accountId": account.id
     }
     window.opener.sendValueToPlugin(payload, 'save-oauth');
     window.close();
