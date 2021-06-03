@@ -21,6 +21,12 @@ var numberdisplayAction = {
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
 	onKeyUp: function (context, settings, coordinates, userDesiredState) {
+		if (!settings["x-access-token"] || new Date() > new Date(settings["x-access-token-expires"])) {
+			console.log("not authenticated!");
+			this.ShowAlert(context);
+			return;
+		}
+		console.log("fetching account history...");
 		Client.accountHistory(settings["x-access-token"], settings["accountId"], settings["timeWindow"] || "1d")
 			.then(data => {
 				let values = calculateValues(data)
@@ -59,6 +65,13 @@ var numberdisplayAction = {
 			"event": "setSettings",
 			"context": context,
 			"payload": settings
+		};
+		websocket.send(JSON.stringify(json));
+	},
+	ShowAlert: function(context) {
+		var json = {
+			"event": "showAlert",
+			"context": context,
 		};
 		websocket.send(JSON.stringify(json));
 	}
