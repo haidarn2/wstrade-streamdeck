@@ -81,18 +81,12 @@ $SD.on('sendToPropertyInspector', jsn => {
 });
  
  
-function saveSettings(sdpi_collection) {
-
-    if (typeof sdpi_collection !== 'object') return;
-
-    if (sdpi_collection.hasOwnProperty('key') && sdpi_collection.key != '') {
-        if (sdpi_collection.value && sdpi_collection.value !== undefined) {
-            console.log(sdpi_collection.key, " => ", sdpi_collection.value);
-            settings[sdpi_collection.key] = sdpi_collection.value;
-            console.log('setSettings....', settings);
-            $SD.api.setSettings($SD.uuid, settings);
-        }
-    }
+function saveSettings(toSet) {
+    if (typeof toSet !== 'object') return;
+    let keys = Object.keys(toSet);
+    keys.forEach((k) => settings[k] = toSet[k])
+    console.log(settings);
+    $SD.api.setSettings($SD.uuid, settings);
 }
  
 /**
@@ -139,13 +133,9 @@ function updateSettings(){
     let window = [...document.getElementsByName("setting_window")].find((e) => e.checked).value
     let moneyFormat = [...document.getElementsByName("setting_money")].find((e) => e.checked).value
     saveSettings({
-        key: "timeWindow",
-        value: window
-    });
-    saveSettings({
-        key: "moneyFormat",
-        value: moneyFormat
-    });
+        "timeWindow": window,
+        "moneyFormat": moneyFormat
+    })
 }
 
 function openExternalLogin() {
