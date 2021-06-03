@@ -150,8 +150,9 @@ function drawLast(values, accType) {
 	canvasContext.textAlign = "left";
 	canvasContext.fillText(accType, 10, 25);
 	canvasContext.font = "bold 35px "+font;
+	let valStrFormatted = formatCash(this.getRoundedValue(values.last, digits, multiplier))
 	canvasContext.fillText(
-		"$" + this.getRoundedValue(values.last, digits, multiplier),
+		"$" + valStrFormatted,
 		textPadding,
 		60
 	);
@@ -162,14 +163,16 @@ function drawHighLow(values) {
 	canvasContext.textAlign = "start";
 	canvasContext.fillStyle = textColor;
 	canvasContext.font = "25px "+font;
+	let valStrFormattedLow = formatCash(this.getRoundedValue(values.low, digits, multiplier))
 	canvasContext.fillText(
-		this.getRoundedValue(values.low, digits, multiplier),
+		valStrFormattedLow,
 		textPadding,
 		90
 	);
 	canvasContext.textAlign = "right";
+	let valStrFormattedHigh = formatCash(this.getRoundedValue(values.high, digits, multiplier))
 	canvasContext.fillText(
-		this.getRoundedValue(values.high, digits, multiplier),
+		valStrFormattedHigh,
 		canvasWidth-textPadding,
 		135
 	);
@@ -226,6 +229,17 @@ function getRoundedValue (value, digits, multiplier) {
 	}
 	return valueString;
 }
+
+function formatCash(n) {
+	if (n < 1e3) return n;
+	if (n >= 1e3 && n < 1e4) return +(n / 1e3).toFixed(2) + "k";
+	if (n >= 1e4 && n < 1e5) return +(n / 1e3).toFixed(1) + "k";
+	if (n >= 1e5 && n < 1e6) return +(n / 1e3).toFixed(0) + "k";
+	if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";
+	if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + "B";
+	if (n >= 1e12) return +(n / 1e12).toFixed(1) + "T";
+}
+
 function renderCanvas(context) {
 	var json = {
     	"event": "setImage",

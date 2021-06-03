@@ -120,8 +120,6 @@ function sendValueToPlugin(value, prop) {
 function refreshSettings() {
     let timeWindow = settings["timeWindow"] || "1d"
     document.getElementById("setting_window_" + timeWindow).checked = true;
-    let moneyFormat = settings["moneyFormat"] || "long"
-    document.getElementById("setting_money_" + moneyFormat).checked = true;
     let refresh_token = settings["x-access-token-expires"];
     let authStatus = refresh_token ? 
     (new Date() > new Date(refresh_token) ? "Authentication expired!" : "Authenticated") 
@@ -130,11 +128,8 @@ function refreshSettings() {
 }
 
 function updateSettings(){
-    let window = [...document.getElementsByName("setting_window")].find((e) => e.checked).value
-    let moneyFormat = [...document.getElementsByName("setting_money")].find((e) => e.checked).value
     saveSettings({
-        "timeWindow": window,
-        "moneyFormat": moneyFormat
+        "timeWindow": [...document.getElementsByName("setting_window")].find((e) => e.checked).value
     })
 }
 
