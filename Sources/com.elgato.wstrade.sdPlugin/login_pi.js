@@ -47,7 +47,7 @@ function otpSubmit() {
     })
 }
 
-function oauthVerify() {
+function saveAndClose() {
     let account = JSON.parse(document.getElementById("account-select").value)
     let payload = {
         "x-access-token": document.getElementById("login-oauth").innerHTML,
@@ -57,5 +57,6 @@ function oauthVerify() {
         "accountId": account.id
     }
     window.opener.sendValueToPlugin(payload, 'save-oauth');
+    window.opener.refreshSettings();
     window.close();
 }

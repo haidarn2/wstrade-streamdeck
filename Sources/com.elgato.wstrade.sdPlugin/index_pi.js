@@ -128,6 +128,11 @@ function refreshSettings() {
     document.getElementById("setting_window_" + timeWindow).checked = true;
     let moneyFormat = settings["moneyFormat"] || "long"
     document.getElementById("setting_money_" + moneyFormat).checked = true;
+    let refresh_token = settings["x-access-token-expires"];
+    let authStatus = refresh_token ? 
+    (new Date() > new Date(refresh_token) ? "Authentication expired!" : "Authenticated") 
+    : "Not authenticated"
+    document.getElementById("auth_status").innerHTML = authStatus;
 }
 
 function updateSettings(){
