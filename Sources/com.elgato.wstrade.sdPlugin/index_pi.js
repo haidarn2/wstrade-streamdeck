@@ -16,11 +16,8 @@ if ($SD) {
 */
 
 function sendValueToPlugin(value, param) {
-    console.log("SENDING VALUE TO PLUGIN: ", value, uuid, pluginAction);
-    console.log($SD)
-    console.log($SD.connection)
+    //console.log("SENDING VALUE TO PLUGIN: ", value, uuid, pluginAction);
     if ($SD && $SD.connection) {
-        console.log("actually sending..")
         var payload = {};
         if (param) {
             payload[param] = value;
@@ -31,6 +28,5 @@ function sendValueToPlugin(value, param) {
 
 function openExternalLogin() {
     window.xtWindow = window.open('login_pi.html', "WS Trade Login");
-    window.xtWindow.sendValueToPluginCallback = sendValueToPlugin;
     setTimeout(() => window.xtWindow.postMessage('initPropertyInspector', '*'), 1500);
 }

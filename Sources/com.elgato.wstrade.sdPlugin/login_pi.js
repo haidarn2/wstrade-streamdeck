@@ -1,23 +1,15 @@
-var sendValueToPluginCallback;
+//var sendValueToPluginCallback;
 
 function loginSubmit() {
-    let payload = {
-        "x-access-token": "1234",
-        "x-refresh-token": "1234",
-        "x-access-token-expires": "1234",
-        "accountId": "1234"
+    let req = {
+        email: document.getElementById("login-email").value,
+        password: document.getElementById("login-password").value
     }
-    sendValueToPluginCallback(payload, 'save-oauth');
-    console.log(sendValueToPluginCallback);
-    //let req = {
-    //    email: document.getElementById("login-email").value,
-    //    password: document.getElementById("login-password").value
-    //}
-    //Client.login(req)
-    //.then((resp) => {
-    //    // unhide otp
-    //    document.getElementById("otp-wrapper").style = "";
-    //})
+    Client.login(req)
+    .then((resp) => {
+        // unhide otp
+        document.getElementById("otp-wrapper").style = "";
+    })
 }
 
 function otpSubmit() {
@@ -45,6 +37,6 @@ function oauthVerify() {
         "x-access-token-expires": document.getElementById("login-oauth-expiry").value,
         "accountId": "non-registered-gsdjith2"
     }
-    //sendValueToPlugin(payload, 'save-oauth');
+    window.opener.sendValueToPlugin(payload, 'save-oauth');
     window.close();
 }

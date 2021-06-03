@@ -89,7 +89,6 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 		var action = jsonObj['action'];
 		var context = jsonObj['context'];
 		var jsonPayload = jsonObj['payload'] || {};
-		console.log(jsonObj)
 		if (event == "keyDown") {
 			var settings = jsonPayload['settings'];
 			var coordinates = jsonPayload['coordinates'];
