@@ -49,25 +49,38 @@
         </div>
 
         <div id="oauth-wrapper" style="display: none;">
-            <div class="sdpi-heading">STEP 3: VERIFY OAUTH</div>
+            <div class="sdpi-heading">STEP 3: SELECT ACCOUNT</div>
             <div type="textarea" class="sdpi-item">
                 <div class="sdpi-item-label">x-access-token</div>
-                <input class="sdpi-item-value" type="text" id="login-oauth" disabled></input>
+                <details class="message">
+                    <summary id="login-oauth"></summary>
+                </details>
             </div>
             <div type="textarea" class="sdpi-item">
                 <div class="sdpi-item-label">x-refresh-token</div>
-                <input class="sdpi-item-value" type="text" id="login-oauth-refresh" disabled></input>
+                <details class="message">
+                    <summary id="login-oauth-refresh"></summary>
+                </details>
             </div>
             <div type="textarea" class="sdpi-item">
-                <div class="sdpi-item-label">x-access-token-expires</div>
-                <input class="sdpi-item-value" type="text" id="login-oauth-expiry" disabled></input>
+                <div class="sdpi-item-label">expires</div>
+                <details class="message">
+                    <summary id="login-oauth-expiry"></summary>
+                </details>
+            </div>
+            <div class="sdpi-item" id="select_single">
+                <div class="sdpi-item-label">Select Account</div>
+                <select class="sdpi-item-value select" id="account-select" onchange="console.log(this)">
+                   <!--option value="20">20</option>
+                   <option value="50">50</option>
+                   <option value="100">100</option-->
+                </select>
             </div>
             <div class="sdpi-item">
-                <div class="sdpi-item-label">Verification</div>
-                <button class="sdpi-item-value" onclick="oauthVerify()">Verify & Save Token</button>
+                <div class="sdpi-item-label">Save</div>
+                <button class="sdpi-item-value" onclick="oauthVerify()">Save & Exit</button>
             </div>
         </div>
-
     </div>
 
 </body>

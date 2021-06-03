@@ -22,19 +22,36 @@ function otpSubmit() {
     .then((resp) => resp.getAllResponseHeaders())
     .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
     .then((headers) => {
-        document.getElementById("login-oauth").value = headers["x-access-token"];
-        document.getElementById("login-oauth-refresh").value = headers["x-refresh-token"];
-        document.getElementById("login-oauth-expiry").value = new Date(headers["x-access-token-expires"] * 1000);
+        document.getElementById("login-oauth").innerHTML = headers["x-access-token"];
+        document.getElementById("login-oauth-refresh").innerHTML = headers["x-refresh-token"];
+        document.getElementById("login-oauth-expiry").innerHTML = new Date(headers["x-access-token-expires"] * 1000);
         // unhide oauth
         document.getElementById("oauth-wrapper").style = "";
+        return Client.getAccounts(headers["x-access-token"]);
+    })
+    .then((resp) => {
+        let accounts = resp.results.map((acc) => {
+            let type = acc.id.startsWith('tfsa') ? 'TFSA' 
+            : acc.id.startsWith('rrsp') ? 'RRSP'
+            : acc.id.startsWith('non-registered-crypto') ? 'CRYPTO'
+            : 'PERSONAL';
+            return {label: type + " " + acc.id, id: acc.id}
+          });
+        let account_selector = document.getElementById("account-select");
+        accounts.forEach((acc) => {
+            let opt = document.createElement("option");
+            opt.value = acc.id;
+            opt.innerHTML = acc.label;
+            account_selector.appendChild(opt);
+        })
     })
 }
 
 function oauthVerify() {
     let payload = {
-        "x-access-token": document.getElementById("login-oauth").value,
-        "x-refresh-token": document.getElementById("login-oauth-refresh"),
-        "x-access-token-expires": document.getElementById("login-oauth-expiry").value,
+        "x-access-token": document.getElementById("login-oauth").innerHTML,
+        "x-refresh-token": document.getElementById("login-oauth-refresh").innerHTML,
+        "x-access-token-expires": document.getElementById("login-oauth-expiry").innerHTML,
         "accountId": "non-registered-gsdjith2"
     }
     window.opener.sendValueToPlugin(payload, 'save-oauth');

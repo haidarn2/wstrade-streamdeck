@@ -13,7 +13,7 @@ var Client = {
         })
         .then((resp) => resp.target);
     },
-    getAccounts: function(oauthToken, oauthToken) {
+    getAccounts: function(oauthToken) {
         return fetch(baseUrl + "/account/list", {
             headers: {"Authorization": "bearer " + oauthToken}
         })
