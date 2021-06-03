@@ -52,7 +52,7 @@ function oauthVerify() {
         "x-access-token": document.getElementById("login-oauth").innerHTML,
         "x-refresh-token": document.getElementById("login-oauth-refresh").innerHTML,
         "x-access-token-expires": document.getElementById("login-oauth-expiry").innerHTML,
-        "accountId": "non-registered-gsdjith2"
+        "accountId": document.getElementById("account-select").value
     }
     window.opener.sendValueToPlugin(payload, 'save-oauth');
     window.close();
