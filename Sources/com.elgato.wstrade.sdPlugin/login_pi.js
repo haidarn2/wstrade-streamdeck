@@ -2,12 +2,17 @@
 const OAUTH_TOKEN = "x-access-token";
 const REFRESH_TOKEN = "x-refresh-token";
 const TOKEN_EXPIRY = "x-access-token-expires";
+const OTP_REQURED_HEADER = "x-wealthsimple-otp-required";
+const OTP_OPTS_HEADER = "x-wealthsimple-otp";
+const OTP_OPTS_PREFIX = "required; method=sms; digits=";
 
 // element ids
 const LOGIN_EMAIL_INPUT = "login-email";
 const LOGIN_PASSWORD_INPUT = "login-password";
 const LOGIN_SUBMIT_BUTTON = "login-submit";
 const OTP_WRAPPER = "otp-wrapper";
+const OTP_OPTS_WRAPPER = "login-otp-opts-wrapper";
+const OTP_OPTS_DETAIL = "login-otp-opts";
 const OTP_LOGIN_INPUT = "login-otp";
 const OTP_SUBMIT_BUTTON = "otp-submit";
 const OAUTH_WRAPPER = "oauth-wrapper";
@@ -15,6 +20,7 @@ const OAUTH_TOKEN_DETAIL = "login-oauth";
 const OAUTH_REFRESH_DETAIL = "login-oauth-refresh";
 const OAUTH_EXPIRY_DETAIL = "login-oauth-expiry";
 const ACCOUNT_SELECT = "account-select"
+
 
 function e(id) {
     return document.getElementById(id);
@@ -26,8 +32,18 @@ function loginSubmit() {
         password: e(LOGIN_PASSWORD_INPUT).value
     }
     Client.login(req)
-    .then((resp) => {
-        console.log(resp);
+    .then((resp) => resp.getAllResponseHeaders())
+    .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
+    .then((headers) => {
+        if (headers[OTP_OPTS_HEADER] && headers[OTP_OPTS_HEADER].startsWith(OTP_OPTS_PREFIX)) {
+             // unhide OTP opts string
+             e(OTP_OPTS_WRAPPER).style = "";
+             e(OTP_OPTS_DETAIL).innerHTML = "SMS sent to number ending in " + headers[OTP_OPTS_HEADER].slice(-2)
+        }
+        return headers;
+    })
+    .then((_headers) => {
+        console.log(_headers);
         // disable inputs
         e(LOGIN_EMAIL_INPUT).disabled = true;
         e(LOGIN_PASSWORD_INPUT).disabled = true;

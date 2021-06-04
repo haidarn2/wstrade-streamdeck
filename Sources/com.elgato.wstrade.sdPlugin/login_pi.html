@@ -38,6 +38,12 @@
        
        <div id="otp-wrapper" style="display: none;">
             <div class="sdpi-heading" id="login-otp-header">STEP 2: ENTER 2FA / SMS</div>
+            <div type="textarea" class="sdpi-item" id="login-otp-opts-wrapper" style="display: none;">
+                <div class="sdpi-item-label" id="login-otp-opts-label">Message</div>
+                <details class="message">
+                    <summary id="login-otp-opts"></summary>
+                </details>
+            </div>
             <div type="textarea" class="sdpi-item" id="required_text">
                 <div class="sdpi-item-label" id="login-otp-label">OTP / 2FA</div>
                 <input class="sdpi-item-value" type="password" id="login-otp"></input>
