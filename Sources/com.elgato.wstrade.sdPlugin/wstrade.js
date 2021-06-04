@@ -33,7 +33,6 @@ var numberdisplayAction = {
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
 		refreshData();
-		registerTimers();
 	},
 	onWillDisappear: function (context, settings, coordinates) {
 		//deregisterTimers();

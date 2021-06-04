@@ -35,6 +35,11 @@
             <div class="sdpi-item-label">Login</div>
             <button class="sdpi-item-value" id="login-submit" onclick="loginSubmit()">Submit</button>
        </div>
+        <div type="textarea" class="sdpi-item" id="login-error-wrapper" style="display: none;">
+            <details class="message caution">
+                <summary id="login-error">Invalid credentials! Please try again.</summary>
+            </details>
+        </div>
        
        <div id="otp-wrapper" style="display: none;">
             <div class="sdpi-heading" id="login-otp-header">STEP 2: ENTER 2FA / SMS</div>

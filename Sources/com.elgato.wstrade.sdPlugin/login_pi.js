@@ -10,6 +10,7 @@ const OTP_OPTS_PREFIX = "required; method=sms; digits=";
 const LOGIN_EMAIL_INPUT = "login-email";
 const LOGIN_PASSWORD_INPUT = "login-password";
 const LOGIN_SUBMIT_BUTTON = "login-submit";
+const LOGIN_ERROR_WRAPPER = "login-error-wrapper";
 const OTP_WRAPPER = "otp-wrapper";
 const OTP_OPTS_WRAPPER = "login-otp-opts-wrapper";
 const OTP_OPTS_DETAIL = "login-otp-opts";
@@ -32,9 +33,13 @@ function loginSubmit() {
         password: e(LOGIN_PASSWORD_INPUT).value
     }
     Client.login(req)
-    .then((resp) => resp.getAllResponseHeaders())
-    .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
-    .then((headers) => {
+    .then((resp) => {
+        let headers =  Client.parseResponseHeaders(resp.getAllResponseHeaders())
+        console.log(resp);
+        if (resp.status != 401 || headers[OTP_REQURED_HEADER] != "true") {
+            e(LOGIN_ERROR_WRAPPER).style = "";
+            throw Error("invalid_credentials")
+        }
         if (headers[OTP_OPTS_HEADER] && headers[OTP_OPTS_HEADER].startsWith(OTP_OPTS_PREFIX)) {
              // unhide OTP opts string
              e(OTP_OPTS_WRAPPER).style = "";
@@ -44,12 +49,17 @@ function loginSubmit() {
     })
     .then((_headers) => {
         console.log(_headers);
+        // hide error message
+        e(LOGIN_ERROR_WRAPPER).style = "display: none;";
         // disable inputs
         e(LOGIN_EMAIL_INPUT).disabled = true;
         e(LOGIN_PASSWORD_INPUT).disabled = true;
         e(LOGIN_SUBMIT_BUTTON).disabled = true;
         // unhide otp
         e(OTP_WRAPPER).style = "";
+    })
+    .catch((err) => {
+        console.error("Invalid credentials.", err);
     })
 }
 
