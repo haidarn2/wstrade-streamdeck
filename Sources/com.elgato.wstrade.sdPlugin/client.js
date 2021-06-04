@@ -1,7 +1,7 @@
 const baseUrl = "https://trade-service.wealthsimple.com"
 var Client = {
     login: function(body) {
-        // use xhr for login endpoint because fetch enforces CORS and won't let us get response headers :sadge:
+        // use xhr for login & refresh endpoints because ES6 fetch enforces CORS and won't let us get response headers :sadge:
         return new Promise(function (resolve, reject) {
             let xhr = new XMLHttpRequest();
             xhr.open("POST", baseUrl + "/auth/login");
@@ -10,6 +10,18 @@ var Client = {
             xhr.onload = resolve;
             xhr.onerror = reject;
             xhr.send(JSON.stringify(body));
+        })
+        .then((resp) => resp.target);
+    },
+    refresh: function(refreshToken) {
+        return new Promise(function (resolve, reject) {
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", baseUrl + "/auth/refresh");
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = resolve;
+            xhr.onerror = reject;
+            xhr.send(JSON.stringify({refresh_token: refreshToken}));
         })
         .then((resp) => resp.target);
     },

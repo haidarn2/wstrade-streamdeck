@@ -29,7 +29,19 @@ var numberdisplayAction = {
 			this.ShowAlert(context);
 			return;
 		}
-		this.updateCanvas(context, settings);
+		// refresh oauth token
+		Client.refresh(settings["x-refresh-token"])
+		.then((resp) => resp.getAllResponseHeaders())
+		.then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
+		.then((headers) => {
+			this.SetSettings(context, Object.assign(settings, {
+				"x-access-token": headers["x-access-token"] || settings["x-access-token"],
+				"x-refresh-token": headers["x-refresh-token"] || settings["x-refresh-token"],
+				"x-access-token-expires": new Date(headers["x-access-token-expires"] * 1000) || settings["x-access-token-expires"]
+			}));
+		});
+
+		//this.updateCanvas(context, settings);
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
