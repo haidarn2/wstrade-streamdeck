@@ -28,13 +28,7 @@ var numberdisplayAction = {
 	type: "com.elgato.wstrade.action",
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
 	},
-	onKeyUp: function (context, settings, coordinates, userDesiredState) {
-		console.log(settings);
-		if (!settings["x-access-token-expires"] || new Date() > new Date(settings["x-access-token-expires"])) {
-			console.log("not authenticated!");
-			this.showAlert(context);
-			return;
-		}
+	onKeyUp: function (context, settings, coordinates, userDesiredState) {		
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
@@ -129,8 +123,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 			numberdisplayAction.onWillDisappear(context, settings, coordinates);
 		}
 		else if (event == "didReceiveSettings") {
-			console.log(jsonPayload);
-			console.log("didReceiveSettings in plugin!!");
+			console.log("didReceiveSettings in plugin", jsonPayload);
 			numberdisplayAction.onDidReceiveSettings(context, settings);
 		}
 	};
@@ -292,11 +285,12 @@ function calculateValues(data) {
 function refreshToken() {
 	console.log("oauth refresh tick: " + new Date())
 	// refresh oauth token
-	if (!settingsCache["x-refresh-token"]) {
-		console.log("missing refresh token, can't refresh!")
+	if (!settingsCache["x-refresh-token"] || !settingsCache["x-access-token-expires"] || new Date() > new Date(settingsCache["x-access-token-expires"])) {
+		console.warn("missing refresh token, can't refresh!")
+		numberdisplayAction.showAlert(contextCache);
 		return;
 	}
-	Client.refresh(settingsCache["x-refresh-token"])
+	Client.refresh(settingsCache["x-refresh-token"] )
 	.then((resp) => resp.getAllResponseHeaders())
 	.then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
 	.then((headers) => {
@@ -310,8 +304,9 @@ function refreshToken() {
 
 function refreshData() {
 	console.log("data refresh tick: " + new Date())
-	if (!settingsCache["x-access-token"] || !settingsCache["accountId"]) {
-		console.log("missing oauth token or accountId, can't refresh data!")
+	if (!settingsCache["x-access-token"] || !settingsCache["accountId"] || !settingsCache["x-access-token-expires"] || new Date() > new Date(settingsCache["x-access-token-expires"])) {
+		console.warn("missing oauth token or accountId, can't refresh data!")
+		numberdisplayAction.showAlert(contextCache)
 		return;
 	}
 	Client.accountHistory(settingsCache["x-access-token"], settingsCache["accountId"], settingsCache["timeWindow"] || "1d")
