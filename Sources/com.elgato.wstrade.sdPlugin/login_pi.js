@@ -16,6 +16,7 @@ const OTP_OPTS_WRAPPER = "login-otp-opts-wrapper";
 const OTP_OPTS_DETAIL = "login-otp-opts";
 const OTP_LOGIN_INPUT = "login-otp";
 const OTP_SUBMIT_BUTTON = "otp-submit";
+const OTP_ERROR_WRAPPER = "otp-error-wrapper"
 const OAUTH_WRAPPER = "oauth-wrapper";
 const OAUTH_TOKEN_DETAIL = "login-oauth";
 const OAUTH_REFRESH_DETAIL = "login-oauth-refresh";
@@ -35,7 +36,6 @@ function loginSubmit() {
     Client.login(req)
     .then((resp) => {
         let headers =  Client.parseResponseHeaders(resp.getAllResponseHeaders())
-        console.log(resp);
         if (resp.status != 401 || headers[OTP_REQURED_HEADER] != "true") {
             e(LOGIN_ERROR_WRAPPER).style = "";
             throw Error("invalid_credentials")
@@ -48,7 +48,6 @@ function loginSubmit() {
         return headers;
     })
     .then((_headers) => {
-        console.log(_headers);
         // hide error message
         e(LOGIN_ERROR_WRAPPER).style = "display: none;";
         // disable inputs
@@ -70,12 +69,17 @@ function otpSubmit() {
         otp: e(OTP_LOGIN_INPUT).value
     }
     Client.login(req)
-    .then((resp) => resp.getAllResponseHeaders())
-    .then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
-    .then((headers) => {
+    .then((resp) => {
+        headers = Client.parseResponseHeaders(resp.getAllResponseHeaders());
+        if (resp.status != 200) {
+            e(OTP_ERROR_WRAPPER).style = "";
+            throw Error("invalid_credentials")
+        }
         e(OAUTH_TOKEN_DETAIL).innerHTML = headers[OAUTH_TOKEN];
         e(OAUTH_REFRESH_DETAIL).innerHTML = headers[REFRESH_TOKEN];
         e(OAUTH_EXPIRY_DETAIL).innerHTML = new Date(headers[TOKEN_EXPIRY] * 1000);
+        // hide error message
+        e(OTP_ERROR_WRAPPER).style = "display: none;";
         // disable inputs
         e(OTP_SUBMIT_BUTTON).disabled = true;
         e(OTP_LOGIN_INPUT).disabled = true;
@@ -97,6 +101,9 @@ function otpSubmit() {
             opt.innerHTML = acc.type + " " + acc.id;
             e(ACCOUNT_SELECT).appendChild(opt);
         })
+    })
+    .catch((err) => {
+        console.error(err);
     })
 }
 

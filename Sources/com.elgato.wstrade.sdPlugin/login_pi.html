@@ -57,6 +57,11 @@
                 <div class="sdpi-item-label" id="otp-submit-label">Login</div>
                 <button class="sdpi-item-value" id="otp-submit" onclick="otpSubmit()">Submit</button>
             </div>
+            <div type="textarea" class="sdpi-item" id="otp-error-wrapper" style="display: none;">
+                <details class="message caution">
+                    <summary id="otp-error">Invalid OTP/2FA! Please try again.</summary>
+                </details>
+            </div>
         </div>
 
         <div id="oauth-wrapper" style="display: none;">
