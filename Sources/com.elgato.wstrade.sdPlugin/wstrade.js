@@ -1,8 +1,10 @@
 var websocket = null;
 var pluginUUID = null;
 var DestinationEnum = Object.freeze({ "HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2 })
-var oauthRefreshTimeout = null;
-var renderRefreshTimeout = null;
+
+// timers
+var oauthRefresh = null;
+var dataRefresh = null;
 
 // constants
 const textColor = "white";
@@ -18,6 +20,10 @@ var canvasContext;
 var canvasWidth;
 var canvasHeight;
 
+// cache
+var settingsCache = null;
+var contextCache = null;
+
 var numberdisplayAction = {
 	type: "com.elgato.wstrade.action",
 	onKeyDown: function (context, settings, coordinates, userDesiredState) {
@@ -26,25 +32,13 @@ var numberdisplayAction = {
 		console.log(settings);
 		if (!settings["x-access-token-expires"] || new Date() > new Date(settings["x-access-token-expires"])) {
 			console.log("not authenticated!");
-			this.ShowAlert(context);
+			this.showAlert(context);
 			return;
 		}
-		// refresh oauth token
-		Client.refresh(settings["x-refresh-token"])
-		.then((resp) => resp.getAllResponseHeaders())
-		.then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
-		.then((headers) => {
-			this.SetSettings(context, Object.assign(settings, {
-				"x-access-token": headers["x-access-token"] || settings["x-access-token"],
-				"x-refresh-token": headers["x-refresh-token"] || settings["x-refresh-token"],
-				"x-access-token-expires": new Date(headers["x-access-token-expires"] * 1000) || settings["x-access-token-expires"]
-			}));
-		});
-
-		//this.updateCanvas(context, settings);
 	},
 	onWillAppear: function (context, settings, coordinates) {
 		this.initCanvas();
+		refreshData();
 		registerTimers();
 	},
 	onWillDisappear: function (context, settings, coordinates) {
@@ -56,20 +50,7 @@ var numberdisplayAction = {
 		canvasWidth = canvas.width
 		canvasHeight = canvas.height
     },
-	updateCanvas: function(context, settings) {
-		console.log("refreshing...");
-		Client.accountHistory(settings["x-access-token"], settings["accountId"], settings["timeWindow"] || "1d")
-		.then(data => {
-			let values = calculateValues(data);
-			clearCanvas();
-			drawDailyChange(values);
-			drawLast(values, settings["accountType"]);
-			drawHighLow(values);
-			drawHighLowBar(values);
-			renderCanvas(context);
-		});
-	},
-	SetTitle: function (context, keyPressCounter) {
+	setTitle: function (context, keyPressCounter) {
 		var json = {
 			"event": "setTitle",
 			"context": context,
@@ -80,7 +61,7 @@ var numberdisplayAction = {
 		};
 		websocket.send(JSON.stringify(json));
 	},
-	SetSettings: function (context, settings) {
+	setSettings: function (context, settings) {
 		var json = {
 			"event": "setSettings",
 			"context": context,
@@ -88,12 +69,15 @@ var numberdisplayAction = {
 		};
 		websocket.send(JSON.stringify(json));
 	},
-	ShowAlert: function(context) {
+	showAlert: function(context) {
 		var json = {
 			"event": "showAlert",
 			"context": context
 		};
 		websocket.send(JSON.stringify(json));
+	},
+	onDidReceiveSettings: function(context, settings) {
+		refreshData();
 	}
 };
 function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo) {
@@ -118,6 +102,10 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 		var action = jsonObj['action'];
 		var context = jsonObj['context'];
 		var jsonPayload = jsonObj['payload'] || {};
+
+		settingsCache = jsonPayload['settings'] || settingsCache
+		contextCache = context || contextCache
+
 		if (event == "keyDown") {
 			var settings = jsonPayload['settings'];
 			var coordinates = jsonPayload['coordinates'];
@@ -143,6 +131,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 		else if (event == "didReceiveSettings") {
 			console.log(jsonPayload);
 			console.log("didReceiveSettings in plugin!!");
+			numberdisplayAction.onDidReceiveSettings(context, settings);
 		}
 	};
 	websocket.onclose = function () {
@@ -300,16 +289,53 @@ function calculateValues(data) {
 	}
 }
 
+function refreshToken() {
+	console.log("oauth refresh tick: " + new Date())
+	// refresh oauth token
+	if (!settingsCache["x-refresh-token"]) {
+		console.log("missing refresh token, can't refresh!")
+		return;
+	}
+	Client.refresh(settingsCache["x-refresh-token"])
+	.then((resp) => resp.getAllResponseHeaders())
+	.then((respHeadersStr) => Client.parseResponseHeaders(respHeadersStr))
+	.then((headers) => {
+		numberdisplayAction.setSettings(contextCache, Object.assign(settingsCache, {
+			"x-access-token": headers["x-access-token"] || settings["x-access-token"],
+			"x-refresh-token": headers["x-refresh-token"] || settings["x-refresh-token"],
+			"x-access-token-expires": new Date(headers["x-access-token-expires"] * 1000) || settings["x-access-token-expires"]
+		}));
+	});
+}
+
+function refreshData() {
+	console.log("data refresh tick: " + new Date())
+	if (!settingsCache["x-access-token"] || !settingsCache["accountId"]) {
+		console.log("missing oauth token or accountId, can't refresh data!")
+		return;
+	}
+	Client.accountHistory(settingsCache["x-access-token"], settingsCache["accountId"], settingsCache["timeWindow"] || "1d")
+	.then(data => {
+		let values = calculateValues(data);
+		clearCanvas();
+		drawDailyChange(values);
+		drawLast(values, settingsCache["accountType"]);
+		drawHighLow(values);
+		drawHighLowBar(values);
+		renderCanvas(contextCache);
+	});
+}
+
 function registerTimers() {
 	console.log("register Timers")
-	if (oauthRefreshTimeout) {
-		clearTimeout(oauthRefreshTimeout);
-		oauthRefreshTimeout = null;
+	if (oauthRefresh) {
+		clearTimeout(oauthRefresh);
+		oauthRefresh = null;
 	}
-	if (renderRefreshTimeout) {
-		clearTimeout(renderRefreshTimeout);
-		renderRefreshTimeout = null;
+	if (dataRefresh) {
+		clearTimeout(dataRefresh);
+		dataRefresh = null;
 	}
-	oauthRefreshTimeout = setInterval(() => console.log("Oauth refresh tick: " + new Date()), 60 * 60 * 1000);
-	renderRefreshTimeout = setInterval(() => console.log("render refresh tick: " + new Date()), 15 * 60 * 1000);
+	oauthRefresh = setInterval(() => refreshToken(), 60 * 60 * 1000);
+	dataRefresh = setInterval(() => refreshData(), 15 * 60 * 1000);
 }
